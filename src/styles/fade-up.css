@@ -1,0 +1,31 @@
+@keyframes fadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
+.movie-card, .movie-detail {
+    animation: fadeUp 0.5s ease-out;
+}
+
+@keyframes EmptyMessageFadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
+.empty-message {
+    animation: EmptyMessageFadeUp 0.4s ease-out;
+}

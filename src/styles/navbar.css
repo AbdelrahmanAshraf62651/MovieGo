@@ -1,0 +1,19 @@
+.nav-item {
+    position: relative;
+}
+
+.nav-item::after {
+    content: "";
+    background-color: red;
+    position: absolute;
+    width: 0;
+    height: 2px;
+    left: 0;
+    bottom: 0;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-item:hover::after {
+    width: 100%;
+}
