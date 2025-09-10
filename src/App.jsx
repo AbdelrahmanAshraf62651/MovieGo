@@ -9,8 +9,8 @@ function App() {
     <Navbar />
     <main className="main-content px-5 md:px-10 flex-grow">
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/favorite" element={<Favourite />} />
+        <Route path="/movie-go/" element={<Home />} />
+        <Route path="/movie-go/favorite" element={<Favourite />} />
         <Route path="/movie/:id" element={<MovieDetail />} />
         <Route path="/tv/:id" element={<MovieDetail />} />
       </Routes>

@@ -5,7 +5,7 @@ function Navbar() {
         <div className="nav-brand text-xl font-semibold cursor-pointer text-red-600 transition duration-500"><a href="/">Movie Go</a> </div>
         <div className="nav-links flex gap-10">
             <a href="/" className="nav-item hover:text-red-600 transition duration-150">Home</a>
-            <a href="/favorite" className="nav-item hover:text-red-600 transition duration-150">Favorites</a>
+            <a href="/movie-go/favorite" className="nav-item hover:text-red-600 transition duration-150">Favorites</a>
         </div>
     </nav>
 }
