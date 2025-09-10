@@ -26,7 +26,7 @@ MovieGo is a React-based movie web application that allows users to browse popul
 1. **Clone the repository: [npm required]**
 
 ```bash
-git clone https://github.com/<your-username>/MovieGo.git
+git clone https://github.com/abdelrahmanashraf62651/MovieGo.git
 cd MovieGo
 npm run dev
 ```
