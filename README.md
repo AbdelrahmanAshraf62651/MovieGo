@@ -1,6 +1,6 @@
 # MovieGo 🎬
 
-MovieGo is a React-based movie web application that allows users to browse popular movies, search for movies, view details, and save their favorite movies. The project uses **React**, **React Router**, and **TMDB API** for fetching movie data.
+MovieGo is a React-based movie web application that allows users to browse popular movies, search for movies, view details, and save their favorite movies. The project uses **React**, **React Router**, **Tailwind CSS** and **TMDB API** for fetching movie data.
 
 ---
 
@@ -17,7 +17,7 @@ MovieGo is a React-based movie web application that allows users to browse popul
 
 ## Live Demo
 
-[MovieGo on GitHub Pages]([https://abdelrahmanashraf62651.github.io/movie-go/#/movie-go](https://abdelrahmanashraf62651.github.io/movie-go)
+[MovieGo on GitHub Pages](https://abdelrahmanashraf62651.github.io/movie-go/)
 
 ---
 
@@ -26,7 +26,7 @@ MovieGo is a React-based movie web application that allows users to browse popul
 1. **Clone the repository: [npm required]**
 
 ```bash
-git clone https://github.com/abdelrahmanashraf62651/MovieGo.git
-cd MovieGo
+git clone https://github.com/abdelrahmanashraf62651/movie-go.git
+cd movie-go
 npm run dev
 ```
