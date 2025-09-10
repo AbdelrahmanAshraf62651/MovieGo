@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import MovieCard from "../components/MovieCard";
-import { getPopularMovie, getPopularTv, searchMovie, searchTv } from "../services/api.js";
+import { getPopularMovie, getPopularTv, searchMovie, searchTv, GENRES, discoverMovieByGenre, discoverTvByGenre } from "../services/api.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+
 function Home() {
     const [searchQuery, setSearchQuery] = useState("");
     const [movies, setMovies] = useState([]);
@@ -26,13 +27,13 @@ function Home() {
 
     async function handleSearch(e) {
         e.preventDefault();
+        if (!searchQuery) return;
         setLoading(true);
         try {
             const [movieResults, tvResults] = await Promise.all([
                 searchMovie(searchQuery),
                 searchTv(searchQuery),
             ]);
-
             setMovies(movieResults.filter(item => item.media_type === "movie") || []);
             setTvs(tvResults.filter(item => item.media_type === "tv") || []);
         } catch (error) {
@@ -41,14 +42,38 @@ function Home() {
         setLoading(false);
     }
 
+    async function handleGenreClick(genreId) {
+        setSearchQuery("");
+        setLoading(true);
+        const [movieResults, tvResults] = await Promise.all([
+            discoverMovieByGenre(genreId),
+            discoverTvByGenre(genreId),
+        ]);
+        setMovies(movieResults || []);
+        setTvs(tvResults || []);
+        setLoading(false);
+    }
+
     return (
         <div className="home">
             <form className="search-form flex justify-center gap-2 my-5" onSubmit={handleSearch}>
-                <input type="text" placeholder="Search for movies or TV shows..." className="search-input w-100 text-center border-1 border-red-600 rounded-2xl py-1 focus:outline-0 caret-red-600" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                <input
+                    type="text"
+                    placeholder="Search for movies or TV shows..."
+                    className="search-input w-100 text-center border-1 border-red-600 rounded-2xl py-1 focus:outline-0 caret-red-600"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
             </form>
-
+            <div className="genre-buttons flex flex-wrap justify-center gap-2 mb-5">
+                {Object.entries(GENRES).map(([id, name]) => (
+                    <button key={id} onClick={() => handleGenreClick(Number(id))} className="px-3 py-1 rounded-full bg-red-500 text-white hover:shadow-md hover:scale-105 transition cursor-pointer"> {name} </button>
+                ))}
+            </div>
             {loading ? (
-                <p className="text-center text-lg font-semibold mt-10"><FontAwesomeIcon icon={faSpinner} className="animate-spin" /></p>
+                <p className="text-center text-lg font-semibold mt-10">
+                    <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
+                </p>
             ) : (
                 <>
                     <h1 className="text-3xl my-5 font-bold">Popular Movies</h1>

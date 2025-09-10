@@ -4,13 +4,13 @@ let key = "9cc95d21e1d086293a162d0a0d56999f";
 export async function getPopularMovie() {
     const response = await fetch(`${BASE_URL}/discover/movie?include_adult=false&api_key=${key}`);
     let data = await response.json();
-    return data.results.slice(0, 10);
+    return data.results;
 }
 
 export async function getPopularTv() {
     const response = await fetch(`${BASE_URL}/discover/tv?include_adult=false&api_key=${key}`);
     let data = await response.json();
-    return data.results.slice(0, 10);
+    return data.results;
 }
 
 export async function searchMovie(query) {
@@ -39,6 +39,18 @@ export async function fetchTvId(id) {
     const response = await fetch(`${BASE_URL}/tv/${id}?api_key=${key}`);
     let data = await response.json();
     return data;
+}
+
+export async function discoverMovieByGenre(genreId) {
+    const res = await fetch(`${BASE_URL}/discover/movie?api_key=${key}&with_genres=${genreId}`);
+    const data = await res.json();
+    return data.results;
+}
+
+export async function discoverTvByGenre(genreId) {
+    const res = await fetch(`${BASE_URL}/discover/tv?api_key=${key}&with_genres=${genreId}`);
+    const data = await res.json();
+    return data.results;
 }
 
 export const GENRES = {

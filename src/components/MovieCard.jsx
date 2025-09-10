@@ -35,11 +35,7 @@ function MovieCard({ movie }) {
             className="movie-card flex flex-col hover:brightness-80 transition duration-200 text-white rounded-sm bg-gray-950 h-[100%]">
             
             <div className="movie-poster relative">
-                <img
-                    src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
-                    alt={movie.title || movie.name}
-                    className="w-[100%] rounded-t-sm"
-                />
+                <img loading="lazy" src={`https://image.tmdb.org/t/p/original${movie.poster_path}`} alt={movie.title || movie.name}className="w-[100%] rounded-t-sm"/>
                 <div className="movie-overlay absolute top-5 right-5 bg-[#fff0] hover:scale-120 active:scale-120 transition duration-150 p-2 rounded-full hover:brightness-150">
                     <button className="fav-btn cursor-pointer" onClick={handleFavClick}>
                         <FontAwesomeIcon icon={isFav ? solidHeart : regularHeart} className={`w-5 h-5 transition-transform duration-200 ${isFav ? "text-red-500 scale-110" : "text-white"}`}/>

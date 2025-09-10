@@ -68,13 +68,13 @@ function MovieDetail() {
                 </button>
             </div>
 
-            <div className="relative max-w-2xl flex flex-col flex-grow gap-3 justify-center">
+            <div className="relative h-[100%] max-w-2xl flex flex-col flex-grow gap-3 justify-center">
                 <h1 className="text-4xl font-bold">{item.title || item.name}</h1>
                 <p className="opacity-70">{item.release_date || item.first_air_date}</p>
                 <p>{item.overview}</p>
                 <p>Rate: {item.vote_average}</p>
                 <StarRating rating={item.vote_average / 2} />
-                <div className="flex gap-2 mt-2 flex-wrap">
+                <div className="flex gap-2 mt-auto flex-wrap">
                     {item.genres?.map((genre) => (
                         <span key={genre.id} className="px-3 py-1 bg-red-500/20 text-red-300 text-sm rounded-full">{genre.name}</span>
                     ))}
