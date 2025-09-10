@@ -17,7 +17,7 @@ MovieGo is a React-based movie web application that allows users to browse popul
 
 ## Live Demo
 
-[MovieGo on GitHub Pages](https://abdelrahmanashraf62651.github.io/movie-go/#/movie-go/)
+[MovieGo on GitHub Pages]([https://abdelrahmanashraf62651.github.io/movie-go/#/movie-go](https://abdelrahmanashraf62651.github.io/movie-go)
 
 ---
 
