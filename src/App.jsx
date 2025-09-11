@@ -5,7 +5,7 @@ import Footer from "./components/Footer"
 import MovieDetail from "./pages/MovieDetail";
 import { Route, Routes } from "react-router-dom"
 function App() {
-    return <div className="min-h-screen flex flex-col">
+    return <div className="min-h-screen flex flex-col text-white bg-gray-900">
         <Navbar />
         <main className="main-content flex-grow">
             <Routes>

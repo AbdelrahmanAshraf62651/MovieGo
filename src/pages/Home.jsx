@@ -94,14 +94,14 @@ function Home() {
                 <input
                     type="text"
                     placeholder="Search for movies or TV shows..."
-                    className="search-input w-100 text-center border-1 border-red-600 rounded-2xl py-1 focus:outline-0 caret-red-600"
+                    className="search-input w-100 text-center border-1  rounded-2xl py-1 focus:outline-0 caret-red-600 bg-gray-800 text-white placeholder-gray-400"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
             </form>
             <div className="genre-buttons flex flex-wrap justify-center gap-2 mb-5">
                 {Object.entries(GENRES).map(([id, name]) => (
-                    <button key={id} onClick={() => handleGenreClick(Number(id))} className="px-3 py-1 rounded-full bg-red-500 text-white hover:shadow-[0_0_6px_red] hover:scale-105 transition duration-300 cursor-pointer"> {name} </button>
+                    <button key={id} onClick={() => handleGenreClick(Number(id))} className="px-3 py-1 rounded-full bg-red-500 text-white hover:bg-red-600 hover:shadow-[0_0_10px_red] hover:scale-105 transition duration-300 cursor-pointer"> {name} </button>
                 ))}
             </div>
             {loading ? (

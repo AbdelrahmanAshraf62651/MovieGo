@@ -90,9 +90,9 @@ function MovieDetail() {
             <img
                 src={item.backdrop_path ? `https://image.tmdb.org/t/p/original${item.backdrop_path}` : `https://image.tmdb.org/t/p/original${item.poster_path}`}
                 alt={item.title || item.name}
-                className="absolute inset-0 w-full h-full object-cover -z-10"
+                className="absolute inset-0 w-full h-full object-cover "
             />
-            <div className="absolute inset-0 bg-black/70 -z-10"></div>
+            <div className="absolute inset-0 bg-black/70 z-0"></div>
 
             <div className="absolute top-5 right-5 bg-[#fff0] p-3 rounded-full hover:brightness-150 transition duration-100 z-10">
                 <button onClick={handleFavClick}>
@@ -129,13 +129,13 @@ function MovieDetail() {
 
                 <div className="mt-4">
                     <h2 className="text-xl font-bold mb-3">Images</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-3 gap-4">
                         {images?.backdrops?.slice(0, 4).reduce((acc, img, index) => {
                             if (index % 4 === 0) acc.push([]);
                             acc[acc.length - 1].push(img);
                             return acc;
                         }, []).map((group, i) => (
-                            <div key={i} className="grid grid-cols-2 gap-1">
+                            <div key={i} className="grid grid-cols-1 md:grid-cols-2 gap-1">
                                 {group.map(img => (
                                     <img
                                         key={img.file_path}
@@ -151,18 +151,18 @@ function MovieDetail() {
                 </div>
 
                 <div className="mt-4">
-                    <h2 className="text-xl font-bold">Videos</h2>
+                    <h2 className="text-xl font-bold mb-3">Videos</h2>
                     <div className="flex flex-col gap-3 mt-2">
                         {videos?.filter(v => v.site === "YouTube").map(v => (
-                            <iframe
-                                key={v.id}
-                                width="560"
-                                height="315"
-                                src={`https://www.youtube.com/embed/${v.key}`}
-                                title={v.name}
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                            ></iframe>
+                            <div key={v.id} className="w-full relative" style={{ paddingTop: "56.25%" }}>
+                                <iframe
+                                    src={`https://www.youtube.com/embed/${v.key}`}
+                                    title={v.name}
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                    className="absolute top-0 left-0 w-full h-full rounded-lg"
+                                ></iframe>
+                            </div>
                         ))}
                     </div>
                 </div>
