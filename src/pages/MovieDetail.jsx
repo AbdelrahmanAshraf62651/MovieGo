@@ -53,9 +53,9 @@ function MovieDetail() {
     if (!item) return <p className="text-center mt-10"><FontAwesomeIcon icon={faSpinner} className="animate-spin" /></p>;
 
     return (
-        <div className="movie-detail flex flex-col mt-5 justify-center relative min-h-[calc(100vh-150px)] text-white p-6 md:p-12">
+        <div className="fade-up flex flex-col mt-5 justify-center relative min-h-[calc(100vh-150px)] text-white p-6 md:p-12">
             <img
-                src={item.backdrop_path ? `https://image.tmdb.org/t/p/original${item.backdrop_path}` : "/fallback.jpg"}
+                src={item.backdrop_path ? `https://image.tmdb.org/t/p/original${item.backdrop_path}` : `https://image.tmdb.org/t/p/original${item.poster_path}`}
                 alt={item.title || item.name}
                 className="absolute inset-0 w-full h-full object-cover -z-10" />
             <div className="absolute inset-0 bg-black/70 -z-10"></div>

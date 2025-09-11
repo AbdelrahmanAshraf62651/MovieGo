@@ -3,6 +3,7 @@ import MovieCard from "../components/MovieCard";
 import { getPopularMovie, getPopularTv, searchMovie, searchTv, GENRES, discoverMovieByGenre, discoverTvByGenre } from "../services/api.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import "../styles/fade-up.css"
 
 function Home() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -55,7 +56,7 @@ function Home() {
     }
 
     return (
-        <div className="home">
+        <div className="home fade-up">
             <form className="search-form flex justify-center gap-2 my-5" onSubmit={handleSearch}>
                 <input
                     type="text"
@@ -67,7 +68,7 @@ function Home() {
             </form>
             <div className="genre-buttons flex flex-wrap justify-center gap-2 mb-5">
                 {Object.entries(GENRES).map(([id, name]) => (
-                    <button key={id} onClick={() => handleGenreClick(Number(id))} className="px-3 py-1 rounded-full bg-red-500 text-white hover:shadow-md hover:scale-105 transition cursor-pointer"> {name} </button>
+                    <button key={id} onClick={() => handleGenreClick(Number(id))} className="px-3 py-1 rounded-full bg-red-500 text-white hover:shadow-[0_0_6px_red] hover:scale-105 transition duration-300 cursor-pointer"> {name} </button>
                 ))}
             </div>
             {loading ? (
