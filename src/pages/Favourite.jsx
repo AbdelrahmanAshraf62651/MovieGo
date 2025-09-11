@@ -19,10 +19,10 @@ function Favourite() {
     }, []);
 
     return (
-        <div className="fav px-5 py-10">
+        <div className="fav">
             {favs.length !== 0 ?
                 (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-5">
                         {favs.map(movie => (
                             <MovieCard key={movie.id} movie={movie} />
                         ))}

@@ -78,7 +78,7 @@ function Home() {
             ) : (
                 <>
                     <h1 className="text-3xl my-5 font-bold">Popular Movies</h1>
-                    <div className="movie-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                    <div className="movie-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-5">
                         {movies.length > 0 ? (
                             movies.map((movie) => <MovieCard key={movie.id} movie={movie} />)
                         ) : (
@@ -86,7 +86,7 @@ function Home() {
                         )}
                     </div>
                     <h1 className="text-3xl my-5 font-bold">Popular TV Shows</h1>
-                    <div className="movie-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                    <div className="movie-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-5">
                         {tvs.length > 0 ? (
                             tvs.map((tv) => <MovieCard key={tv.id} movie={tv} />)
                         ) : (
