@@ -1,6 +1,12 @@
 import { useParams, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { fetchMovieId, fetchTvId } from "../services/api.js";
+import {
+    fetchMovieId,
+    fetchTvId,
+    fetchCredits,
+    fetchImages,
+    fetchVideos
+} from "../services/api.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as fullStar, faStarHalfAlt as halfStar, faHeart as solidHeart, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { faStar as emptyStar, faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons";
@@ -21,19 +27,46 @@ function StarRating({ rating }) {
 function MovieDetail() {
     const { id } = useParams();
     const location = useLocation();
-    const [item, setItem] = useState(null);
-    const [isFav, setIsFav] = useState(false);
     const isTv = location.pathname.startsWith("/tv");
+
+    const [item, setItem] = useState(null);
+    const [credits, setCredits] = useState(null);
+    const [images, setImages] = useState(null);
+    const [videos, setVideos] = useState([]);
+    const [isFav, setIsFav] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(() => {
         async function loadItem() {
             try {
                 const data = isTv ? await fetchTvId(id) : await fetchMovieId(id);
+                const creditsData = await fetchCredits(id, isTv);
+                const imagesData = await fetchImages(id, isTv);
+                const videosData = await fetchVideos(id, isTv);
+                const allImages = [
+                    data.backdrop_path,
+                    data.poster_path,
+                    ...imagesData.backdrops.map(img => img.file_path)
+                ].map(path => `https://image.tmdb.org/t/p/original${path}`);
+
+                await Promise.all(allImages.map(src => new Promise(resolve => {
+                    const img = new Image();
+                    img.src = src;
+                    img.onload = img.onerror = resolve;
+                })));
+
                 setItem(data);
+                setCredits(creditsData);
+                setImages(imagesData);
+                setVideos(videosData);
+
                 const favs = JSON.parse(localStorage.getItem("favs")) || [];
                 setIsFav(favs.some(fav => fav.id === data.id));
             } catch (error) {
                 console.error("Error fetching details:", error);
+            } finally {
+                setLoading(false);
             }
         }
         loadItem();
@@ -50,36 +83,97 @@ function MovieDetail() {
         setIsFav(!isFav);
     }
 
-    if (!item) return <p className="text-center mt-10"><FontAwesomeIcon icon={faSpinner} className="animate-spin" /></p>;
+    if (loading) return <p className="text-center mt-10"><FontAwesomeIcon icon={faSpinner} className="animate-spin" /></p>;
 
     return (
-        <div className="fade-up flex flex-col mt-5 justify-center relative min-h-[calc(100vh-150px)] text-white p-6 md:p-12">
+        <div className="flex flex-col justify-center relative min-h-[calc(100vh-150px)] text-white p-6 md:p-12">
             <img
                 src={item.backdrop_path ? `https://image.tmdb.org/t/p/original${item.backdrop_path}` : `https://image.tmdb.org/t/p/original${item.poster_path}`}
                 alt={item.title || item.name}
-                className="absolute inset-0 w-full h-full object-cover -z-10" />
+                className="absolute inset-0 w-full h-full object-cover -z-10"
+            />
             <div className="absolute inset-0 bg-black/70 -z-10"></div>
 
             <div className="absolute top-5 right-5 bg-[#fff0] p-3 rounded-full hover:brightness-150 transition duration-100 z-10">
                 <button onClick={handleFavClick}>
                     <FontAwesomeIcon
                         icon={isFav ? solidHeart : regularHeart}
-                        className={`w-6 h-6 hover:scale-120 transition duration-150 cursor-pointer ${isFav ? "text-red-500" : "text-white"}`} />
+                        className={`w-6 h-6 hover:scale-120 transition duration-150 cursor-pointer ${isFav ? "text-red-500" : "text-white"}`}
+                    />
                 </button>
             </div>
 
-            <div className="relative h-[100%] max-w-2xl flex flex-col flex-grow gap-3 justify-center">
+            <div className="fade-up  relative h-[100%] max-w-2xl flex flex-col flex-grow gap-3 justify-center">
                 <h1 className="text-4xl font-bold">{item.title || item.name}</h1>
-                <p className="opacity-70">{item.release_date || item.first_air_date}</p>
-                <p>{item.overview}</p>
-                <p>Rate: {item.vote_average}</p>
-                <StarRating rating={item.vote_average / 2} />
                 <div className="flex gap-2 mt-auto flex-wrap">
                     {item.genres?.map((genre) => (
                         <span key={genre.id} className="px-3 py-1 bg-red-500/20 text-red-300 text-sm rounded-full">{genre.name}</span>
                     ))}
                 </div>
+                <p className="opacity-70">{item.release_date || item.first_air_date}</p>
+                <p>{item.overview}</p>
+                <p>Rate: {item.vote_average}</p>
+                <StarRating rating={item.vote_average / 2} />
+
+                <div className="mt-4">
+                    <h2 className="text-xl font-bold">Crew</h2>
+                    <div className="flex flex-wrap gap-3 mt-2">
+                        {credits?.cast?.sort((a, b) => a.order - b.order).slice(0, 1).map(actor => (
+                            <div key={actor.id} className="px-3 py-1 bg-red-500/20 text-red-300 text-sm rounded-full">{actor.name}</div>
+                        ))}
+                        {credits?.crew?.filter(member => ["Director", "Writer", "Screenplay"].includes(member.job)).map(member => (
+                            <div key={member.id} className="px-3 py-1 bg-red-500/20 text-red-300 text-sm rounded-full">{member.name}</div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="mt-4">
+                    <h2 className="text-xl font-bold mb-3">Images</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        {images?.backdrops?.slice(0, 4).reduce((acc, img, index) => {
+                            if (index % 4 === 0) acc.push([]);
+                            acc[acc.length - 1].push(img);
+                            return acc;
+                        }, []).map((group, i) => (
+                            <div key={i} className="grid grid-cols-2 gap-1">
+                                {group.map(img => (
+                                    <img
+                                        key={img.file_path}
+                                        src={`https://image.tmdb.org/t/p/original${img.file_path}`}
+                                        alt="Backdrop"
+                                        className="h-24 w-full object-cover rounded-lg cursor-pointer"
+                                        onClick={() => setSelectedImage(`https://image.tmdb.org/t/p/original${img.file_path}`)}
+                                    />
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="mt-4">
+                    <h2 className="text-xl font-bold">Videos</h2>
+                    <div className="flex flex-col gap-3 mt-2">
+                        {videos?.filter(v => v.site === "YouTube").map(v => (
+                            <iframe
+                                key={v.id}
+                                width="560"
+                                height="315"
+                                src={`https://www.youtube.com/embed/${v.key}`}
+                                title={v.name}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            ></iframe>
+                        ))}
+                    </div>
+                </div>
             </div>
+
+            {selectedImage && (
+                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+                    <button className="absolute top-5 right-5 text-white text-3xl cursor-pointer font-bold hover:text-red-500" onClick={() => setSelectedImage(null)}> &times; </button>
+                    <img src={selectedImage} alt="Backdrop" className="max-h-[90vh] max-w-[90vw] rounded-lg shadow-lg" />
+                </div>
+            )}
         </div>
     );
 }

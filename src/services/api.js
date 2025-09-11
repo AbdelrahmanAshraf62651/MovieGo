@@ -53,6 +53,27 @@ export async function discoverTvByGenre(genreId) {
     return data.results;
 }
 
+export async function fetchCredits(id, isTv = false) {
+    const type = isTv ? "tv" : "movie";
+    const res = await fetch(`${BASE_URL}/${type}/${id}/credits?api_key=${key}`);
+    const data = await res.json();
+    return data;
+}
+
+export async function fetchImages(id, isTv = false) {
+    const type = isTv ? "tv" : "movie";
+    const res = await fetch(`${BASE_URL}/${type}/${id}/images?api_key=${key}`);
+    const data = await res.json();
+    return data;
+}
+
+export async function fetchVideos(id, isTv = false) {
+    const type = isTv ? "tv" : "movie";
+    const res = await fetch(`${BASE_URL}/${type}/${id}/videos?api_key=${key}`);
+    const data = await res.json();
+    return data.results.slice(0, 1);
+}
+
 export const GENRES = {
     28: "Action",
     12: "Adventure",

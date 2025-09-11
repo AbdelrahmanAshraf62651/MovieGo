@@ -11,13 +11,29 @@ function Home() {
     const [tvs, setTvs] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // Utility to preload images
+    async function preloadImages(items) {
+        const images = items.map(item => `https://image.tmdb.org/t/p/w500${item.poster_path || item.backdrop_path}`);
+        await Promise.all(images.map(src => new Promise(resolve => {
+            const img = new Image();
+            img.src = src;
+            img.onload = img.onerror = resolve;
+        })));
+    }
+
     useEffect(() => {
         async function fetchPopular() {
             setLoading(true);
             try {
                 const [movieData, tvData] = await Promise.all([getPopularMovie(), getPopularTv()]);
-                setMovies(movieData || []);
-                setTvs(tvData || []);
+                const filteredMovies = movieData || [];
+                const filteredTvs = tvData || [];
+
+                // Preload all poster/backdrop images
+                await Promise.all([preloadImages(filteredMovies), preloadImages(filteredTvs)]);
+
+                setMovies(filteredMovies);
+                setTvs(filteredTvs);
             } catch (error) {
                 console.error("Error fetching popular content:", error);
             }
@@ -35,8 +51,14 @@ function Home() {
                 searchMovie(searchQuery),
                 searchTv(searchQuery),
             ]);
-            setMovies(movieResults.filter(item => item.media_type === "movie") || []);
-            setTvs(tvResults.filter(item => item.media_type === "tv") || []);
+            const moviesFiltered = movieResults.filter(item => item.media_type === "movie") || [];
+            const tvsFiltered = tvResults.filter(item => item.media_type === "tv") || [];
+
+            // Preload images
+            await Promise.all([preloadImages(moviesFiltered), preloadImages(tvsFiltered)]);
+
+            setMovies(moviesFiltered);
+            setTvs(tvsFiltered);
         } catch (error) {
             console.error("Error searching content:", error);
         }
@@ -46,17 +68,28 @@ function Home() {
     async function handleGenreClick(genreId) {
         setSearchQuery("");
         setLoading(true);
-        const [movieResults, tvResults] = await Promise.all([
-            discoverMovieByGenre(genreId),
-            discoverTvByGenre(genreId),
-        ]);
-        setMovies(movieResults || []);
-        setTvs(tvResults || []);
+        try {
+            const [movieResults, tvResults] = await Promise.all([
+                discoverMovieByGenre(genreId),
+                discoverTvByGenre(genreId),
+            ]);
+
+            const moviesFiltered = movieResults || [];
+            const tvsFiltered = tvResults || [];
+
+            // Preload images
+            await Promise.all([preloadImages(moviesFiltered), preloadImages(tvsFiltered)]);
+
+            setMovies(moviesFiltered);
+            setTvs(tvsFiltered);
+        } catch (error) {
+            console.error("Error discovering by genre:", error);
+        }
         setLoading(false);
     }
 
     return (
-        <div className="home fade-up">
+        <div className="home fade-up px-2 md:px-5 my-10">
             <form className="search-form flex justify-center gap-2 my-5" onSubmit={handleSearch}>
                 <input
                     type="text"
