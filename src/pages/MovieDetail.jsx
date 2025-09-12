@@ -136,10 +136,10 @@ function MovieDetail() {
                                 {group.map(img => (
                                     <img
                                         key={img.file_path}
-                                        src={`https://image.tmdb.org/t/p/original${img.file_path}`}
+                                        src={`https://image.tmdb.org/t/p/w780${img.file_path}`}
                                         alt="Backdrop"
                                         className="h-24 w-full object-cover rounded-lg cursor-pointer"
-                                        onClick={() => setSelectedImage(`https://image.tmdb.org/t/p/original${img.file_path}`)}
+                                        onClick={() => setSelectedImage(`https://image.tmdb.org/t/p/w780${img.file_path}`)}
                                     />
                                 ))}
                             </div>
