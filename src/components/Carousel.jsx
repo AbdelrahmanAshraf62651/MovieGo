@@ -11,7 +11,7 @@ const scroll = (ref, direction) => {
 
 const Carousel = forwardRef(({ title, items }, refProp) => {
     return (
-        <div className="carousel">
+        <div className="carousel mb-10">
             <h1 className="text-3xl my-5 font-bold">{title}</h1>
             <div className="relative">
                 {items.length > 0 && (
@@ -19,15 +19,21 @@ const Carousel = forwardRef(({ title, items }, refProp) => {
                         <FontAwesomeIcon icon={faChevronLeft} />
                     </button>
                 )}
-                <div ref={refProp} className="flex gap-4 overflow-hidden scrollbar-none">
+
+                <div ref={refProp} className="flex gap-4 overflow-x-auto scrollbar-none" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
                     {items.length > 0 ? (
-                        items.map((item) => <MovieCard key={item.id} movie={item} />)
+                        items.map((item) => (
+                            <div key={item.id} className="flex-shrink-0  w-[150px] sm:w-[200px] md:w-[250px] lg:w-[300px] overflow-hidden">
+                                <MovieCard movie={item} />
+                            </div>
+                        ))
                     ) : (
                         <p className="text-gray-400 py-10">No items found</p>
                     )}
                 </div>
+
                 {items.length > 0 && (
-                    <button onClick={() => scroll(refProp, 1)} className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-full cursor-pointer" >
+                    <button onClick={() => scroll(refProp, 1)} className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-full cursor-pointer">
                         <FontAwesomeIcon icon={faChevronRight} />
                     </button>
                 )}

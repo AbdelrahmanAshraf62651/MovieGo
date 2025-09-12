@@ -1,0 +1,5 @@
+@media (min-width: 375px) and (max-width: 639px) {
+    .movie-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

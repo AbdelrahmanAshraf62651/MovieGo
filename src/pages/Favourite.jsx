@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import MovieCard from "../components/MovieCard";
 import "../styles/fade-up.css"
+import "../styles/fav-list.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
@@ -50,7 +51,7 @@ function Favourite() {
     return (
         <div className="fav fade-up px-2 md:px-5 my-10">
             {favs.length !== 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-5">
+                <div className="movie-grid grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-5">
                     {favs.map(movie => (
                         <MovieCard key={movie.id} movie={movie} />
                     ))}

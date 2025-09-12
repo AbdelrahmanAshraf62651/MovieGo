@@ -126,13 +126,13 @@ function MovieDetail() {
 
                 <div className="mt-4">
                     <h2 className="text-xl font-bold mb-3">Images</h2>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         {images?.backdrops?.slice(0, 4).reduce((acc, img, index) => {
                             if (index % 4 === 0) acc.push([]);
                             acc[acc.length - 1].push(img);
                             return acc;
                         }, []).map((group, i) => (
-                            <div key={i} className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                            <div key={i} className="grid grid-cols-2 gap-1">
                                 {group.map(img => (
                                     <img
                                         key={img.file_path}
