@@ -83,7 +83,7 @@ function MovieDetail() {
         setIsFav(!isFav);
     }
 
-    if (loading) return <p className="text-center mt-10"><FontAwesomeIcon icon={faSpinner} className="animate-spin" /></p>;
+    if (loading) return <p className="text-center mt-10"><FontAwesomeIcon icon={faSpinner} className="animate-spin text-red-500" /></p>;
 
     return (
         <div className="flex flex-col justify-center relative min-h-[calc(100vh-150px)] text-white p-6 md:p-12">
@@ -96,10 +96,7 @@ function MovieDetail() {
 
             <div className="absolute top-5 right-5 bg-[#fff0] p-3 rounded-full hover:brightness-150 transition duration-100 z-10">
                 <button onClick={handleFavClick}>
-                    <FontAwesomeIcon
-                        icon={isFav ? solidHeart : regularHeart}
-                        className={`w-6 h-6 hover:scale-120 transition duration-150 cursor-pointer ${isFav ? "text-red-500" : "text-white"}`}
-                    />
+                    <FontAwesomeIcon icon={isFav ? solidHeart : regularHeart} className={`w-6 h-6 hover:scale-120 transition duration-150 cursor-pointer ${isFav ? "text-red-500" : "text-white"}`} />
                 </button>
             </div>
 
@@ -169,8 +166,7 @@ function MovieDetail() {
             </div>
 
             {selectedImage && (
-                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-                    <button className="absolute top-5 right-5 text-white text-3xl cursor-pointer font-bold hover:text-red-500" onClick={() => setSelectedImage(null)}> &times; </button>
+                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onClick={() => setSelectedImage(null)}>
                     <img src={selectedImage} alt="Backdrop" className="max-h-[90vh] max-w-[90vw] rounded-lg shadow-lg" />
                 </div>
             )}

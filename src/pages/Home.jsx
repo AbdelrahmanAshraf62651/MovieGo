@@ -1,131 +1,176 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import MovieCard from "../components/MovieCard";
-import { getPopularMovie, getPopularTv, searchMovie, searchTv, GENRES, discoverMovieByGenre, discoverTvByGenre } from "../services/api.js";
+import Carousel from "../components/Carousel";
+import {
+    getPopularMovie,
+    getPopularTv,
+    getTopRatedMovie,
+    getTopRatedTv,
+    getTrending,
+    getUpcomingMovies,
+    searchMovie,
+    searchTv,
+    GENRES,
+    discoverMovieByGenre,
+    discoverTvByGenre,
+} from "../services/api.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import "../styles/fade-up.css"
+import "../styles/fade-up.css";
 
 function Home() {
     const [searchQuery, setSearchQuery] = useState("");
-    const [movies, setMovies] = useState([]);
-    const [tvs, setTvs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [popularMovies, setPopularMovies] = useState([]);
+    const [popularTvs, setPopularTvs] = useState([]);
+    const [topRatedMovies, setTopRatedMovies] = useState([]);
+    const [topRatedTvs, setTopRatedTvs] = useState([]);
+    const [trending, setTrending] = useState([]);
+    const [upcomingMovies, setUpcomingMovies] = useState([]);
+    const [searchResults, setSearchResults] = useState({ movies: [], tvs: [] });
+    const [showAllSections, setShowAllSections] = useState(true);
 
-    // Utility to preload images
-    async function preloadImages(items) {
-        const images = items.map(item => `https://image.tmdb.org/t/p/w500${item.poster_path || item.backdrop_path}`);
-        await Promise.all(images.map(src => new Promise(resolve => {
+    const movieRef = useRef(null);
+    const tvRef = useRef(null);
+    const topMovieRef = useRef(null);
+    const topTvRef = useRef(null);
+    const trendingRef = useRef(null);
+    const upcomingRef = useRef(null);
+
+    const preloadImages = async (items) => {
+        const urls = items.map(item => `https://image.tmdb.org/t/p/w500${item.poster_path || item.backdrop_path}`);
+        await Promise.all(urls.map(src => new Promise(res => {
             const img = new Image();
             img.src = src;
-            img.onload = img.onerror = resolve;
+            img.onload = img.onerror = res;
         })));
-    }
+    };
 
     useEffect(() => {
-        async function fetchPopular() {
+        const fetchAll = async () => {
             setLoading(true);
             try {
-                const [movieData, tvData] = await Promise.all([getPopularMovie(), getPopularTv()]);
-                const filteredMovies = movieData || [];
-                const filteredTvs = tvData || [];
+                const [
+                    popularMoviesData,
+                    popularTvsData,
+                    topMoviesData,
+                    topTvsData,
+                    trendingData,
+                    upcomingData
+                ] = await Promise.all([
+                    getPopularMovie(),
+                    getPopularTv(),
+                    getTopRatedMovie(),
+                    getTopRatedTv(),
+                    getTrending(),
+                    getUpcomingMovies()
+                ]);
 
-                // Preload all poster/backdrop images
-                await Promise.all([preloadImages(filteredMovies), preloadImages(filteredTvs)]);
+                await Promise.all([
+                    preloadImages(popularMoviesData),
+                    preloadImages(popularTvsData),
+                    preloadImages(topMoviesData),
+                    preloadImages(topTvsData),
+                    preloadImages(trendingData),
+                    preloadImages(upcomingData)
+                ]);
 
-                setMovies(filteredMovies);
-                setTvs(filteredTvs);
+                setPopularMovies(popularMoviesData || []);
+                setPopularTvs(popularTvsData || []);
+                setTopRatedMovies(topMoviesData || []);
+                setTopRatedTvs(topTvsData || []);
+                setTrending(trendingData || []);
+                setUpcomingMovies(upcomingData || []);
             } catch (error) {
-                console.error("Error fetching popular content:", error);
+                console.error(error);
             }
             setLoading(false);
-        }
-        fetchPopular();
+        };
+
+        fetchAll();
     }, []);
 
-    async function handleSearch(e) {
+    const handleSearch = async (e) => {
         e.preventDefault();
         if (!searchQuery) return;
         setLoading(true);
         try {
             const [movieResults, tvResults] = await Promise.all([
                 searchMovie(searchQuery),
-                searchTv(searchQuery),
+                searchTv(searchQuery)
             ]);
-            const moviesFiltered = movieResults.filter(item => item.media_type === "movie") || [];
-            const tvsFiltered = tvResults.filter(item => item.media_type === "tv") || [];
-
-            // Preload images
-            await Promise.all([preloadImages(moviesFiltered), preloadImages(tvsFiltered)]);
-
-            setMovies(moviesFiltered);
-            setTvs(tvsFiltered);
+            await Promise.all([preloadImages(movieResults), preloadImages(tvResults)]);
+            setSearchResults({
+                movies: movieResults || [],
+                tvs: tvResults || []
+            });
+            setShowAllSections(false);
         } catch (error) {
-            console.error("Error searching content:", error);
+            console.error(error);
         }
         setLoading(false);
-    }
+    };
 
-    async function handleGenreClick(genreId) {
+    const handleGenreClick = async (genreId) => {
         setSearchQuery("");
+        setSearchResults({ movies: [], tvs: [] });
         setLoading(true);
+        setShowAllSections(false);
         try {
-            const [movieResults, tvResults] = await Promise.all([
+            const [moviesByGenre, tvsByGenre] = await Promise.all([
                 discoverMovieByGenre(genreId),
-                discoverTvByGenre(genreId),
+                discoverTvByGenre(genreId)
             ]);
-
-            const moviesFiltered = movieResults || [];
-            const tvsFiltered = tvResults || [];
-
-            // Preload images
-            await Promise.all([preloadImages(moviesFiltered), preloadImages(tvsFiltered)]);
-
-            setMovies(moviesFiltered);
-            setTvs(tvsFiltered);
+            await Promise.all([preloadImages(moviesByGenre), preloadImages(tvsByGenre)]);
+            setPopularMovies(moviesByGenre || []);
+            setPopularTvs(tvsByGenre || []);
         } catch (error) {
-            console.error("Error discovering by genre:", error);
+            console.error(error);
         }
         setLoading(false);
-    }
+    };
 
     return (
-        <div className="home fade-up px-2 md:px-5 my-10">
-            <form className="search-form flex justify-center gap-2 my-5" onSubmit={handleSearch}>
+        <div className="home fade-up px-4 md:px-8 py-10 bg-gray-900 min-h-screen text-white">
+            <form className="flex justify-center mb-6" onSubmit={handleSearch}>
                 <input
                     type="text"
-                    placeholder="Search for movies or TV shows..."
-                    className="search-input w-100 text-center border-1  rounded-2xl py-1 focus:outline-0 caret-red-600 bg-gray-800 text-white placeholder-gray-400"
+                    placeholder="Search movies or TV shows..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    className="w-full max-w-md px-4 py-2 rounded-2xl bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 caret-red-500"
                 />
             </form>
-            <div className="genre-buttons flex flex-wrap justify-center gap-2 mb-5">
+
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
                 {Object.entries(GENRES).map(([id, name]) => (
-                    <button key={id} onClick={() => handleGenreClick(Number(id))} className="px-3 py-1 rounded-full bg-red-500 text-white hover:bg-red-600 hover:shadow-[0_0_10px_red] hover:scale-105 transition duration-300 cursor-pointer"> {name} </button>
+                    <button key={id} onClick={() => handleGenreClick(Number(id))} className="px-4 py-1 rounded-full bg-red-600 text-white hover:bg-red-700 hover:shadow-lg hover:scale-105 transition transform duration-200 cursor-pointer" >
+                        {name}
+                    </button>
                 ))}
             </div>
+
             {loading ? (
-                <p className="text-center text-lg font-semibold mt-10">
-                    <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
+                <p className="text-center text-lg mt-10">
+                    <FontAwesomeIcon icon={faSpinner} className="animate-spin text-red-500" />
                 </p>
+            ) : searchResults.movies.length > 0 || searchResults.tvs.length > 0 ? (
+                <div className="search-results grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {searchResults.movies.map(movie => <MovieCard key={movie.id} movie={movie} />)}
+                    {searchResults.tvs.map(tv => <MovieCard key={tv.id} movie={tv} />)}
+                </div>
             ) : (
                 <>
-                    <h1 className="text-3xl my-5 font-bold">Popular Movies</h1>
-                    <div className="movie-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-5">
-                        {movies.length > 0 ? (
-                            movies.map((movie) => <MovieCard key={movie.id} movie={movie} />)
-                        ) : (
-                            <p className="text-center col-span-full mt-10 text-gray-500">No movies found</p>
-                        )}
-                    </div>
-                    <h1 className="text-3xl my-5 font-bold">Popular TV Shows</h1>
-                    <div className="movie-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-5">
-                        {tvs.length > 0 ? (
-                            tvs.map((tv) => <MovieCard key={tv.id} movie={tv} />)
-                        ) : (
-                            <p className="text-center col-span-full mt-10 text-gray-500">No TV shows found</p>
-                        )}
-                    </div>
+                    {showAllSections && <Carousel title="Trending" items={trending} ref={trendingRef} />}
+                    <Carousel title="Popular Movies" items={popularMovies} ref={movieRef} />
+                    <Carousel title="Popular TV Shows" items={popularTvs} ref={tvRef} />
+                    {showAllSections && (
+                        <>
+                            <Carousel title="Top Rated Movies" items={topRatedMovies} ref={topMovieRef} />
+                            <Carousel title="Top Rated TV Shows" items={topRatedTvs} ref={topTvRef} />
+                            <Carousel title="Upcoming Movies" items={upcomingMovies} ref={upcomingRef} />
+                        </>
+                    )}
                 </>
             )}
         </div>

@@ -1,0 +1,39 @@
+import React, { forwardRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import MovieCard from "../components/MovieCard";
+
+const scroll = (ref, direction) => {
+    if (!ref?.current) return;
+    const width = ref.current.clientWidth;
+    ref.current.scrollBy({ left: direction * width, behavior: "smooth" });
+};
+
+const Carousel = forwardRef(({ title, items }, refProp) => {
+    return (
+        <div className="carousel">
+            <h1 className="text-3xl my-5 font-bold">{title}</h1>
+            <div className="relative">
+                {items.length > 0 && (
+                    <button onClick={() => scroll(refProp, -1)} className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-full cursor-pointer" >
+                        <FontAwesomeIcon icon={faChevronLeft} />
+                    </button>
+                )}
+                <div ref={refProp} className="flex gap-4 overflow-hidden scrollbar-none">
+                    {items.length > 0 ? (
+                        items.map((item) => <MovieCard key={item.id} movie={item} />)
+                    ) : (
+                        <p className="text-gray-400 py-10">No items found</p>
+                    )}
+                </div>
+                {items.length > 0 && (
+                    <button onClick={() => scroll(refProp, 1)} className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/70 hover:bg-gray-700 text-white p-2 rounded-full cursor-pointer" >
+                        <FontAwesomeIcon icon={faChevronRight} />
+                    </button>
+                )}
+            </div>
+        </div>
+    );
+});
+
+export default Carousel;

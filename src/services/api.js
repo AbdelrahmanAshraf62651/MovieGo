@@ -1,46 +1,73 @@
 let BASE_URL = "https://api.themoviedb.org/3";
 let key = "9cc95d21e1d086293a162d0a0d56999f";
 
+// Popular
 export async function getPopularMovie() {
-    const response = await fetch(`${BASE_URL}/discover/movie?include_adult=false&api_key=${key}`);
-    let data = await response.json();
+    const res = await fetch(`${BASE_URL}/discover/movie?include_adult=false&api_key=${key}`);
+    const data = await res.json();
     return data.results;
 }
 
 export async function getPopularTv() {
-    const response = await fetch(`${BASE_URL}/discover/tv?include_adult=false&api_key=${key}`);
-    let data = await response.json();
+    const res = await fetch(`${BASE_URL}/discover/tv?include_adult=false&api_key=${key}`);
+    const data = await res.json();
     return data.results;
 }
 
+// Top Rated
+export async function getTopRatedMovie() {
+    const res = await fetch(`${BASE_URL}/movie/top_rated?api_key=${key}`);
+    const data = await res.json();
+    return data.results;
+}
+
+export async function getTopRatedTv() {
+    const res = await fetch(`${BASE_URL}/tv/top_rated?api_key=${key}`);
+    const data = await res.json();
+    return data.results;
+}
+
+// Trending (daily)
+export async function getTrending() {
+    const res = await fetch(`${BASE_URL}/trending/all/day?api_key=${key}`);
+    const data = await res.json();
+    return data.results;
+}
+
+// Upcoming Movies
+export async function getUpcomingMovies() {
+    const res = await fetch(`${BASE_URL}/movie/upcoming?api_key=${key}`);
+    const data = await res.json();
+    return data.results;
+}
+
+// Search
 export async function searchMovie(query) {
-    const response = await fetch(
-        `${BASE_URL}/search/multi?include_adult=false&api_key=${key}&query=${encodeURIComponent(query)}`
-    );
-    let data = await response.json();
+    const res = await fetch(`${BASE_URL}/search/movie?include_adult=false&api_key=${key}&query=${encodeURIComponent(query)}`);
+    const data = await res.json();
     return data.results;
 }
 
 export async function searchTv(query) {
-    const response = await fetch(
-        `${BASE_URL}/search/multi?include_adult=false&api_key=${key}&query=${encodeURIComponent(query)}`
-    );
-    let data = await response.json();
+    const res = await fetch(`${BASE_URL}/search/tv?include_adult=false&api_key=${key}&query=${encodeURIComponent(query)}`);
+    const data = await res.json();
     return data.results;
 }
 
+// Fetch by ID
 export async function fetchMovieId(id) {
-    const response = await fetch(`${BASE_URL}/movie/${id}?api_key=${key}`);
-    let data = await response.json();
+    const res = await fetch(`${BASE_URL}/movie/${id}?api_key=${key}`);
+    const data = await res.json();
     return data;
 }
 
 export async function fetchTvId(id) {
-    const response = await fetch(`${BASE_URL}/tv/${id}?api_key=${key}`);
-    let data = await response.json();
+    const res = await fetch(`${BASE_URL}/tv/${id}?api_key=${key}`);
+    const data = await res.json();
     return data;
 }
 
+// Discover by Genre
 export async function discoverMovieByGenre(genreId) {
     const res = await fetch(`${BASE_URL}/discover/movie?api_key=${key}&with_genres=${genreId}`);
     const data = await res.json();
@@ -53,6 +80,7 @@ export async function discoverTvByGenre(genreId) {
     return data.results;
 }
 
+// Credits, Images, Videos
 export async function fetchCredits(id, isTv = false) {
     const type = isTv ? "tv" : "movie";
     const res = await fetch(`${BASE_URL}/${type}/${id}/credits?api_key=${key}`);
@@ -74,6 +102,7 @@ export async function fetchVideos(id, isTv = false) {
     return data.results.slice(0, 1);
 }
 
+// Genres
 export const GENRES = {
     28: "Action",
     12: "Adventure",

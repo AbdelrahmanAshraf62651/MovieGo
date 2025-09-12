@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import MovieCard from "../components/MovieCard";
 import "../styles/fade-up.css"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 function Favourite() {
     const [favs, setFavs] = useState(() => {
@@ -12,7 +14,6 @@ function Favourite() {
         setFavs(JSON.parse(localStorage.getItem("favs")) || []);
     }
 
-    // Preload images
     async function preloadImages(items) {
         const images = items.map(item => `https://image.tmdb.org/t/p/w500${item.poster_path || item.backdrop_path}`);
         await Promise.all(images.map(src => new Promise(resolve => {
@@ -41,13 +42,13 @@ function Favourite() {
     if (loading) {
         return (
             <p className="text-center text-lg font-semibold mt-10">
-                Loading favorites...
+                <FontAwesomeIcon icon={faSpinner} className="animate-spin text-red-500" />
             </p>
         );
     }
 
     return (
-        <div className="fav px-2 md:px-5 my-10">
+        <div className="fav fade-up px-2 md:px-5 my-10">
             {favs.length !== 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-5">
                     {favs.map(movie => (
