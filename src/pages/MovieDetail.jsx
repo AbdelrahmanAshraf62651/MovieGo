@@ -83,7 +83,7 @@ function MovieDetail() {
         : `https://image.tmdb.org/t/p/original${item.poster_path}`;
 
     return (
-        <div className="flex flex-col justify-center relative min-h-[calc(100vh-150px)] text-white p-6 md:p-12">
+        <div className="flex flex-col justify-center relative min-h-[calc(100vh-112px)] text-white p-6 md:p-12">
             {bgLoading && (
                 <div className="absolute inset-0">
                     <Skeleton className="w-full h-full" />
@@ -103,9 +103,9 @@ function MovieDetail() {
                 </button>
             </div>
 
-            <div className="fade-up relative h-[100%] max-w-2xl flex flex-col flex-grow gap-3 justify-center">
+            <div className="fade-up relative max-w-2xl flex flex-col flex-grow gap-3 justify-center">
                 <h1 className="text-4xl font-bold">{item.title || item.name}</h1>
-                <div className="flex gap-2 mt-auto flex-wrap">
+                <div className="flex gap-2 flex-wrap">
                     {item.genres?.map((genre) => (
                         <span key={genre.id} className="px-3 py-1 bg-red-500/20 text-red-300 text-sm rounded-full">
                             {genre.name}
