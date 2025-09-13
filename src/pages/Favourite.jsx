@@ -2,21 +2,18 @@ import { useEffect, useState } from "react";
 import MovieCard from "../components/MovieCard";
 import "../styles/fade-up.css"
 import "../styles/fav-list.css"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 function Favourite() {
     const [favs, setFavs] = useState(() => {
         return JSON.parse(localStorage.getItem("favs")) || [];
     });
-    const [loading, setLoading] = useState(true);
 
     function loadFavs() {
         setFavs(JSON.parse(localStorage.getItem("favs")) || []);
     }
 
     async function preloadImages(items) {
-        const images = items.map(item => `https://image.tmdb.org/t/p/w500${item.poster_path || item.backdrop_path}`);
+        const images = items.map(item => `https://image.tmdb.org/t/p/w780${item.poster_path || item.backdrop_path}`);
         await Promise.all(images.map(src => new Promise(resolve => {
             const img = new Image();
             img.src = src;
@@ -39,14 +36,6 @@ function Favourite() {
             window.removeEventListener("favsUpdated", initFavs);
         };
     }, []);
-
-    if (loading) {
-        return (
-            <p className="text-center text-lg font-semibold mt-10">
-                <FontAwesomeIcon icon={faSpinner} className="animate-spin text-red-500" />
-            </p>
-        );
-    }
 
     return (
         <div className="fav fade-up px-2 md:px-5 my-10">
