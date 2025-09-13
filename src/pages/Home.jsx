@@ -59,8 +59,6 @@ function Home() {
                 searchMovie(searchQuery),
                 searchTv(searchQuery),
             ]);
-
-            // 🔑 filter out results with no poster
             const filteredMovies = (movieResults || []).filter(
                 (m) => m.poster_path && m.poster_path.trim() !== ""
             );
@@ -113,11 +111,7 @@ function Home() {
 
             <div className="flex flex-wrap justify-center gap-2 mb-8">
                 {Object.entries(GENRES).map(([id, name]) => (
-                    <button
-                        key={id}
-                        onClick={() => handleGenreClick(Number(id))}
-                        className="px-4 py-1 rounded-full bg-red-600 text-white hover:bg-red-700 hover:shadow-lg hover:scale-105 transition transform duration-200 cursor-pointer"
-                    >
+                    <button key={id} onClick={() => handleGenreClick(Number(id))} className="px-4 py-1 rounded-full bg-red-600 text-white hover:bg-red-700 hover:shadow-lg hover:scale-105 transition transform duration-200 cursor-pointer">
                         {name}
                     </button>
                 ))}
@@ -126,7 +120,7 @@ function Home() {
             {hasSearched ? (
                 searchResults.movies.length === 0 && searchResults.tvs.length === 0 ? (
                     showNoResults && (
-                        <div className="text-center py-20 text-gray-400">
+                        <div className="text-center py-20 text-gray-400 fade-up">
                             <h2 className="text-2xl font-bold mb-2">No results found</h2>
                             <p className="text-lg">Try searching for another movie or TV show.</p>
                         </div>
