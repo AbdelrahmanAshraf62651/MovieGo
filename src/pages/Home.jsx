@@ -59,11 +59,18 @@ function Home() {
                 searchMovie(searchQuery),
                 searchTv(searchQuery),
             ]);
-            const results = {
-                movies: movieResults || [],
-                tvs: tvResults || [],
-            };
+
+            // 🔑 filter out results with no poster
+            const filteredMovies = (movieResults || []).filter(
+                (m) => m.poster_path && m.poster_path.trim() !== ""
+            );
+            const filteredTvs = (tvResults || []).filter(
+                (t) => t.poster_path && t.poster_path.trim() !== ""
+            );
+
+            const results = { movies: filteredMovies, tvs: filteredTvs };
             setSearchResults(results);
+
             if (results.movies.length === 0 && results.tvs.length === 0) {
                 setTimeout(() => setShowNoResults(true), 0);
             }
@@ -71,6 +78,7 @@ function Home() {
             console.error(error);
         }
     };
+
 
     const handleGenreClick = async (genreId) => {
         setSearchQuery("");
@@ -117,7 +125,7 @@ function Home() {
 
             {hasSearched ? (
                 searchResults.movies.length === 0 && searchResults.tvs.length === 0 ? (
-                    showNoResults && ( 
+                    showNoResults && (
                         <div className="text-center py-20 text-gray-400">
                             <h2 className="text-2xl font-bold mb-2">No results found</h2>
                             <p className="text-lg">Try searching for another movie or TV show.</p>
@@ -125,12 +133,16 @@ function Home() {
                     )
                 ) : (
                     <div className="movie-grid grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-5">
-                        {searchResults.movies.map((movie) => (
-                            <MovieCard key={movie.id} movie={movie} />
-                        ))}
-                        {searchResults.tvs.map((tv) => (
-                            <MovieCard key={tv.id} movie={tv} />
-                        ))}
+                        {searchResults.movies
+                            .filter((movie) => movie.poster_path)
+                            .map((movie) => (
+                                <MovieCard key={movie.id} movie={movie} />
+                            ))}
+                        {searchResults.tvs
+                            .filter((tv) => tv.poster_path)
+                            .map((tv) => (
+                                <MovieCard key={tv.id} movie={tv} />
+                            ))}
                     </div>
                 )
             ) : (

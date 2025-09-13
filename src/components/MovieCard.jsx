@@ -7,16 +7,25 @@ import Skeleton from "./Skeleton";
 import "../styles/fade-up.css";
 
 function MovieCard({ movie }) {
-    const [isFav, setIsFav] = useState(false);
+    // Hide card if there is no poster
+    if (!movie.poster_path) return null;
+
+    // State
+    const [isFav, setIsFav] = useState(() => {
+        const favs = JSON.parse(localStorage.getItem("favs")) || [];
+        return favs.some((fav) => fav.id === movie.id);
+    });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
+    // Handle favorites on mount
     useEffect(() => {
         const favs = JSON.parse(localStorage.getItem("favs")) || [];
         setIsFav(favs.some((fav) => fav.id === movie.id));
     }, [movie.id]);
 
-    function handleFavClick(e) {
+    // Toggle favorite
+    const handleFavClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
         let favs = JSON.parse(localStorage.getItem("favs")) || [];
@@ -28,36 +37,49 @@ function MovieCard({ movie }) {
         localStorage.setItem("favs", JSON.stringify(favs));
         setIsFav(!isFav);
         window.dispatchEvent(new Event("favsUpdated"));
-    }
+    };
 
+    // Determine media type
     const mediaType = movie.media_type || (movie.first_air_date ? "tv" : "movie");
-
-    if (!movie.poster_path) return null;
-
     const imgUrl = `https://image.tmdb.org/t/p/w780${movie.poster_path}`;
 
     return (
-        <Link to={`/${mediaType}/${movie.id}`} className="movie-card flex-shrink-0 flex flex-col hover:shadow-lg hover:brightness-80 transition duration-300 text-white rounded-lg bg-gray-950 h-full" style={{ flex: "0 0 20%", minWidth: "150px" }}>
+        <Link
+            to={`/${mediaType}/${movie.id}`}
+            aria-label={`View details for ${movie.title || movie.name}`}
+            className="movie-card flex-shrink-0 flex flex-col hover:shadow-lg hover:brightness-80 transition duration-300 text-white rounded-lg bg-gray-950 h-full"
+            style={{ flex: "0 0 20%", minWidth: "150px" }}
+        >
             <div className="relative w-full aspect-[2/3]">
-                {loading && (
+                {/* Skeleton while loading */}
+                {loading && !error && (
                     <Skeleton className="absolute inset-0 w-full h-full rounded-lg" />
                 )}
 
-                <img
-                    src={imgUrl}
-                    alt={movie.title || movie.name}
-                    className={`w-full h-full object-cover rounded-lg transition-opacity duration-500 ${
-                        loading ? "opacity-0" : "opacity-100"
-                    }`}
-                    onLoad={() => setLoading(false)}
-                    onError={() => {
-                        setError(true);
-                        setLoading(false);
-                    }}
-                />
+                {/* Movie Poster */}
+                {!error && (
+                    <img
+                        src={imgUrl}
+                        alt={movie.title || movie.name}
+                        className={`w-full h-full object-cover rounded-lg transition-opacity duration-500 ${
+                            loading ? "opacity-0" : "opacity-100"
+                        }`}
+                        onLoad={() => setLoading(false)}
+                        onError={() => {
+                            setError(true);
+                            setLoading(false);
+                        }}
+                    />
+                )}
 
-                {error && null}
+                {/* Fallback if image fails */}
+                {error && (
+                    <div className="absolute inset-0 bg-gray-700 flex items-center justify-center text-gray-300 text-sm rounded-lg">
+                        No Image
+                    </div>
+                )}
 
+                {/* Favorite Button */}
                 <div className="absolute top-2 right-2 bg-[#fff0] p-2 rounded-full hover:brightness-125 cursor-pointer">
                     <button onClick={handleFavClick}>
                         <FontAwesomeIcon
